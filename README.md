@@ -1,6 +1,8 @@
 # ReactTodoApp
 This is basic react js todo app for beginner. 
-### Install packages
+
+## Install packages
+
 - Instal [Node](https://nodejs.org/en/download/package-manager)
 - Open the directory where you want to create your first react app.
 - Open cmd or powershell comand window.
@@ -8,7 +10,7 @@ This is basic react js todo app for beginner.
 
   ![image](https://github.com/rakib33/ReactTodoApp/assets/10026710/bdd62d73-9fb0-425f-b330-8c89a80a7a61)
 
-### Create react project
+## Create react project
 
 - Install npm globally, **npm install -g create-react-app**
   
@@ -50,21 +52,135 @@ This is basic react js todo app for beginner.
     ```
      npm install axios
     ```
-  - Create a Configuration File, Create a file named **apiConfig.ts** where you can define your API URLs and the baseURL. 
+  ## Config
+  
+  - Create a folder Config, Create a file named **apiConfig.ts** where you can define your API URLs and the baseURL. 
 
     ```
+    // apiConfig.ts
     const baseURL ='http://api.example.com';
+    
     export const apiEndPoint ={
-     getStudentsApi: '/get',
-     postStudentAPi: '/post',
-     putStudentApi: '/put',
-     deleteStudentApi: 'delete'
+     getStudentsApi:baseURL + '/get',
+     postStudentAPi: baseURL + '/post',
+     putStudentApi:baseURL + '/put',
+     deleteStudentApi: baseURL +'delete'
     };
     
     export default baseURL;
     ```
-  - Now create a folder Services and create **StudentService.ts**  
+  - Add  **axiosInstance.ts** file under Config folder for api calling. We can reuse this axios 
+    instance in our services.
+    
+    ```
+    // axiosInstance.ts
+    import axios, {AxiosInstance, AxiosResponse, AxiosError } from "axios";
+    import baseURL from './apiConfig';
+    
+    const axiosInstance: AxiosInstance = axios.create({
+      baseURL,
+      timeout: 5000, // adjust as needed
+    });
+    
+    export default axiosInstance;
 
+    ```
+  - create another **status.ts** class for status code or response message.
+
+    ```
+    export const AppStatusMessage ={
+    Fetch_Faild_Msg :'Failed to fetch data'
+    }
+    ```
+  - Create a **Model** folder and create **Student.ts** model interface.
+
+    ```
+    export interface Student{
+    id: number,
+    Name: string,
+    }
+    ```
+  
+  ## Service
+  
+  - Now create a folder **Services** and create **StudentService.ts**  
+  
+    ```
+    import baseURL ,{apiEndPoint} from "../Config/apiConfig";
+    import {Student} from "../Model/Student";
+    import axiosInstance from "../Config/axiosInstance";
+    import { AppStatusMessage } from "../Config/status";
+    
+    interface StudentApiServiceInterface{
+        fetchStudentData<T>(endPoint: string): Promise<T>
+    }
+    
+    class StudentApiService implements StudentApiServiceInterface{
+      
+        async fetchStudentData<T>(endPoint: string): Promise<T>{
+            try{
+                const response = await axiosInstance.get(endPoint);
+                return response.data;
+            }catch(error){
+                throw new Error(AppStatusMessage.Fetch_Faild_Msg + ': ${error}');
+            }
+        }
+    
+        async fetchStudents(): Promise<Student[]>{
+            try{
+                return await this.fetchStudentData<Student[]>(apiEndPoint.getStudentsApi);
+            }catch(error){
+                throw new Error(AppStatusMessage.Fetch_Faild_Msg + ': ${error}'); 
+            }
+        }
+    }    
+    export default new StudentApiService();
+    ```
+   ## Components
+
+   - Create a folder **Componets** and add our **StudentComponents.tsx** file
+
+     ```
+      import React, {useState , useEffect} from 'react';
+      import StudentService from '../Services/StudentService';
+      import { apiEndPoint } from '../Config/apiConfig';
+      import {Student} from '../Model/Student';
+      
+      const StudentComponet : React.FC = () => {
+      
+          const [students,setStudents] = useState<Student[] | null> (null);
+          const [error,setError] = useState<any> (null);
+         
+          useEffect(()=>{
+                  const fetchStudents = async () => {
+                      try{
+                          const studentData = await StudentService.fetchStudentData<Student[]>(apiEndPoint.getStudentsApi);
+                          setStudents(studentData);
+                      }catch(error){
+                          setError(error);
+                      }
+                  };
+                  fetchStudents();
+          
+          },[]);
+      
+          return (
+              <div>
+                {error && <div>Error: {error}</div>}
+                {students && (
+                  <div>
+                    <h1>Students</h1>
+                    <ul>
+                      {students.map(student => (
+                        <li key={student.id}>{student.Name}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            );
+      };
+     ```
    ## References
    - https://www.c-sharpcorner.com/article/reactjs-crud-using-net-core-web-api/
-   - https://medium.com/@jaydeepvpatil225/product-management-application-using-net-core-6-and-react-js-with-crud-operation-1f8bb9f709ba
+   - https://medium.com/@jaydeepvpatil225/product-management-application-using-net-core-6-and-      react-js-with-crud-operation-1f8bb9f709ba
