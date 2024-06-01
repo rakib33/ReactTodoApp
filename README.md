@@ -181,6 +181,38 @@ This is basic react js todo app for beginner.
             );
       };
      ```
+   
+   ## Routing
+
+   -  Install React Router
+
+     ```
+     npm install react-router-dom
+     ```
+   - Set Up Router.Open file named App.tsx (create if you haven't already) and set up the router.
+
+     ```
+      import React from 'react';
+      import logo from './logo.svg';
+      import './App.css';
+      import { Routes, Route, BrowserRouter } from 'react-router-dom';
+      import StudentComponet from './Components/StudentComponent';
+      import DashboardComponent from './Components/DashboardComponent';
+      import NotFoundComponent from './Components/NotFound';
+      
+      const App: React.FC = () =>{
+        return(
+          <BrowserRouter>
+          <Routes>   
+            <Route path="/" Component={DashboardComponent} />
+            <Route path="/student" Component={StudentComponet} />
+            <Route Component={NotFoundComponent} />
+        </Routes>
+        </BrowserRouter>
+        );
+      }
+      export default App;
+     ```
    ## References
    - https://www.c-sharpcorner.com/article/reactjs-crud-using-net-core-web-api/
    - https://medium.com/@jaydeepvpatil225/product-management-application-using-net-core-6-and-      react-js-with-crud-operation-1f8bb9f709ba
