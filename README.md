@@ -1,12 +1,14 @@
 # ReactTodoApp
 This is basic react js todo app for beginner. 
-## Install packages
+### Install packages
 - Instal [Node](https://nodejs.org/en/download/package-manager)
 - Open the directory where you want to create your first react app.
 - Open cmd or powershell comand window.
 - Now check npm and npx version
 
   ![image](https://github.com/rakib33/ReactTodoApp/assets/10026710/bdd62d73-9fb0-425f-b330-8c89a80a7a61)
+
+### Create react project
 
 - Install npm globally, **npm install -g create-react-app**
   
@@ -48,6 +50,21 @@ This is basic react js todo app for beginner.
     ```
      npm install axios
     ```
+  - Create a Configuration File, Create a file named **apiConfig.ts** where you can define your API URLs and the baseURL. 
 
+    ```
+    const baseURL ='http://api.example.com';
+    export const apiEndPoint ={
+     getStudentsApi: '/get',
+     postStudentAPi: '/post',
+     putStudentApi: '/put',
+     deleteStudentApi: 'delete'
+    };
+    
+    export default baseURL;
+    ```
+  - Now create a folder Services and create **StudentService.ts**  
 
-   
+   ## References
+   - https://www.c-sharpcorner.com/article/reactjs-crud-using-net-core-web-api/
+   - https://medium.com/@jaydeepvpatil225/product-management-application-using-net-core-6-and-react-js-with-crud-operation-1f8bb9f709ba
