@@ -43,7 +43,11 @@ This is basic react js todo app for beginner.
 
    ![image](https://github.com/rakib33/ReactTodoApp/assets/10026710/d77ec6e7-285d-42bd-bc5c-871fbbdd6ab6)
 
+  - Now to fetching api we are using axios . install axios
 
+    ```
+     npm install axios
+    ```
 
 
    
