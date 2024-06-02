@@ -492,7 +492,206 @@ This is basic react js todo app for beginner.
     - Database was created.
    
    ## xUnit Test
-   
+   - Add xUnit test project name StudentAPITestProject
+   - Add packages
+   - **Microsoft.EntityFrameworkCore.InMemory**
+   - **Microsoft.AspNetCore.Mvc.Core**
+   - **Microsoft.AspNetCore.Mvc**
+   - **Microsoft.AspNetCore.Mvc.NewtonsoftJson**
+   - **Moq**
+   ### Repository test
+   - Add folder Repositories and add StudentRepositoryTests.cs
+
+     ```
+     public class StudentRepositoryTests
+      {
+          private readonly DbContextOptions<StudentDbContext> _options;
+  
+          public StudentRepositoryTests()
+          {
+              _options = new DbContextOptionsBuilder<StudentDbContext>()
+                  .UseInMemoryDatabase(databaseName: "StudentTestDb")
+                  .Options;
+          }
+  
+          [Fact]
+          public async Task GetStudents_ReturnsAllStudents()
+          {
+              using (var context = new StudentDbContext(_options))
+              {
+                  context.students.Add(new Student { Id = 1, Name = "John" });
+                  context.students.Add(new Student { Id = 2, Name = "Jane" });
+                  await context.SaveChangesAsync();
+              }
+  
+              using (var context = new StudentDbContext(_options))
+              {
+                  var repository = new StudentRepository(context);
+                  var students = await repository.GetStudents();
+  
+                  Assert.Equal(2, students.Count);
+              }
+          }
+  
+          [Fact]
+          public async Task SaveStudent_AddsStudentToDatabase()
+          {
+              using (var context = new StudentDbContext(_options))
+              {
+                  var repository = new StudentRepository(context);
+                  var student = new Student { Name = "Mark" };
+                  await repository.SaveStudent(student);
+  
+                  var savedStudent = await context.students.FirstOrDefaultAsync(s => s.Name == "Mark");
+                  Assert.NotNull(savedStudent);
+              }
+          }
+  
+          [Fact]
+          public async Task UpdateStudent_UpdatesExistingStudent()
+          {
+              using (var context = new StudentDbContext(_options))
+              {
+                  var student = new Student { Id = 1, Name = "John"};
+                  context.students.Add(student);
+                  await context.SaveChangesAsync();
+  
+                  var repository = new StudentRepository(context);
+                  student.Name = "John Updated";
+                  await repository.UpdateStudent(student);
+  
+                  var updatedStudent = await context.students.FindAsync(1);
+                  Assert.Equal("John Updated", updatedStudent.Name);
+              }
+          }
+  
+          [Fact]
+          public async Task DeleteStudent_RemovesStudentFromDatabase()
+          {
+              using (var context = new StudentDbContext(_options))
+              {
+                  var student = new Student { Id = 1, Name = "John"};
+                  context.students.Add(student);
+                  await context.SaveChangesAsync();
+  
+                  var repository = new StudentRepository(context);
+                  await repository.DeleteStudent(1);
+  
+                  var deletedStudent = await context.students.FindAsync(1);
+                  Assert.Null(deletedStudent);
+              }
+          }
+  
+          // Add more tests for other methods as needed
+      }
+     ```
+   - Add Controller folder add StudentsControllerTests.cs
+
+     ```
+      public class StudentsControllerTests
+          {
+              private readonly Mock<IStudentRepository> _mockRepo;
+              private readonly StudentController _controller;
+      
+              public StudentsControllerTests()
+              {
+                  _mockRepo = new Mock<IStudentRepository>();
+                  _controller = new StudentController(_mockRepo.Object);
+              }
+      
+              [Fact]
+              public async Task GetStudents_ReturnsOkResult_WithListOfStudents()
+              {
+                  // Arrange
+                  var students = new List<Student>
+                  {
+                  new Student { Id = 1, Name = "John"},
+                  new Student { Id = 2, Name = "Jane" }
+                  };
+                  _mockRepo.Setup(repo => repo.GetStudents()).ReturnsAsync(students);
+      
+                  // Act
+                  var result = await _controller.GetStudents();
+      
+                  // Assert
+                  var okResult = Assert.IsType<OkObjectResult>(result.Result);
+                  var returnStudents = Assert.IsType<List<Student>>(okResult.Value);
+                  Assert.Equal(2, returnStudents.Count);
+              }
+      
+              [Fact]
+              public async Task SaveStudent_ReturnsCreatedAtActionResult_WithStudent()
+              {
+                  // Arrange
+                  var student = new Student { Id = 1, Name = "John" };
+                  _mockRepo.Setup(repo => repo.SaveStudent(It.IsAny<Student>())).ReturnsAsync(student);
+      
+                  // Act
+                  var result = await _controller.SaveStudent(student);
+      
+                  // Assert
+                  var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result.Result);
+                  var returnStudent = Assert.IsType<Student>(createdAtActionResult.Value);
+                  Assert.Equal(student.Id, returnStudent.Id);
+              }
+      
+              [Fact]
+              public async Task UpdateStudent_ReturnsNoContentResult()
+              {
+                  // Arrange
+                  var student = new Student { Id = 1, Name = "John"};
+                  _mockRepo.Setup(repo => repo.UpdateStudent(It.IsAny<Student>())).ReturnsAsync(student);
+      
+                  // Act
+                  var result = await _controller.UpdateStudent(1, student);
+      
+                  // Assert
+                  Assert.IsType<NoContentResult>(result);
+              }
+      
+              [Fact]
+              public async Task UpdateStudent_ReturnsBadRequest_WhenIdsDoNotMatch()
+              {
+                  // Arrange
+                  var student = new Student { Id = 1, Name = "John" };
+      
+                  // Act
+                  var result = await _controller.UpdateStudent(2, student);
+      
+                  // Assert
+                  Assert.IsType<BadRequestResult>(result);
+              }
+      
+              //[Fact]
+              //public async Task DeleteStudent_ReturnsNoContentResult()
+              //{
+              //    // Arrange
+              //    _mockRepo.Setup(repo => repo.DeleteStudent(1)).Returns();
+      
+              //    // Act
+              //    var result = await _controller.DeleteStudent(1);
+      
+              //    // Assert
+              //    Assert.IsType<NoContentResult>(result);
+              //}
+      
+              [Fact]
+              public async Task DeleteStudent_ReturnsNotFoundResult_WhenStudentDoesNotExist()
+              {
+                  // Arrange
+                  _mockRepo.Setup(repo => repo.DeleteStudent(1)).Throws(new KeyNotFoundException());
+      
+                  // Act
+                  var result = await _controller.DeleteStudent(1);
+      
+                  // Assert
+                  Assert.IsType<NotFoundResult>(result);
+              }
+      
+              // Add more tests for other methods as needed
+          }
+     ```  
+  
    ## References
    - https://www.c-sharpcorner.com/article/reactjs-crud-using-net-core-web-api/
    - https://medium.com/@jaydeepvpatil225/product-management-application-using-net-core-6-and-react-js-with-crud-operation-1f8bb9f709ba
