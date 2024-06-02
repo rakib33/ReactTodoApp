@@ -68,12 +68,12 @@ namespace DotNet_8_ToDoApp.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateStudent(Student student)
+        public async Task<IActionResult> UpdateStudent(int id,Student student)
         {
-            //if (id != student.Id)
-            //{
-            //    return BadRequest();
-            //}
+            if (id != student.Id)
+            {
+                return BadRequest();
+            }
 
             try
             {

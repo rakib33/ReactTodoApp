@@ -24,3 +24,5 @@ yarn-error.log*
 DotNetToDoApp/DotNet_8_ToDoApp/.vs
 DotNetToDoApp/DotNet_8_ToDoApp/DotNet_8_ToDoApp/bin
 DotNetToDoApp/DotNet_8_ToDoApp/DotNet_8_ToDoApp/obj
+DotNetToDoApp/DotNet_8_ToDoApp/StudentAPITestProject/bin
+DotNetToDoApp/DotNet_8_ToDoApp/StudentAPITestProject/obj
