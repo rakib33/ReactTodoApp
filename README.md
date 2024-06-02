@@ -215,4 +215,4 @@ This is basic react js todo app for beginner.
      ```
    ## References
    - https://www.c-sharpcorner.com/article/reactjs-crud-using-net-core-web-api/
-   - https://medium.com/@jaydeepvpatil225/product-management-application-using-net-core-6-and-      react-js-with-crud-operation-1f8bb9f709ba
+   - https://medium.com/@jaydeepvpatil225/product-management-application-using-net-core-6-and-react-js-with-crud-operation-1f8bb9f709ba
