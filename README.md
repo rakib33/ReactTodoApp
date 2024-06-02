@@ -1,4 +1,4 @@
-# ReactTodoApp
+# DotNet Core 8 & ReactTodoApp
 This is basic react js todo app for beginner. 
 
 ## Install packages
@@ -213,6 +213,12 @@ This is basic react js todo app for beginner.
       }
       export default App;
      ```
+   
+   # DotNet 8 ToDo-App
+
+   - Create a project Solution name **DotNet_8_ToDoApp** or your prefarable name.
+   - In this project we using SQL Server Database
+     
    ## References
    - https://www.c-sharpcorner.com/article/reactjs-crud-using-net-core-web-api/
    - https://medium.com/@jaydeepvpatil225/product-management-application-using-net-core-6-and-react-js-with-crud-operation-1f8bb9f709ba
