@@ -481,7 +481,18 @@ This is basic react js todo app for beginner.
       app.Run();
 
     ```
+   ## Database Code First Migration
+
+    - open package manager console 
+    - run command **add-migration Initail-Commit
     
+    ![image](https://github.com/rakib33/ReactTodoApp/assets/10026710/b1f1d788-4a96-4e8d-add3-ded5b5492684)
+
+    - run **update-database**
+    - Database was created.
+   
+   ## xUnit Test
+   
    ## References
    - https://www.c-sharpcorner.com/article/reactjs-crud-using-net-core-web-api/
    - https://medium.com/@jaydeepvpatil225/product-management-application-using-net-core-6-and-react-js-with-crud-operation-1f8bb9f709ba
