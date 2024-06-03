@@ -241,7 +241,7 @@ This is basic react js todo app for beginner.
       }
      }
      ```
-   - Create folder Models and create a class **Student** and **ConnectionModel**
+   - Create folder Models and create a class **Student** and **ConnectionStrings**
 
      ```
       public class Student
@@ -251,10 +251,11 @@ This is basic react js todo app for beginner.
           public string Name { get; set; }
       }
 
-     public class ConnectionModel
-      {
-          public string DefaultConnection { get; set; }
-      }
+     public class ConnectionStrings
+     {
+        public string DefaultConnection { get; set; } = string.Empty;
+        public string SqlServerConnectionLocaldb { get; set; } = string.Empty;
+     }
      ```
    - Create a folder **DataContext** and add **StudentDbContext** class
 
@@ -451,15 +452,17 @@ This is basic react js todo app for beginner.
                                   .AllowAnyMethod();
           });
       });
-      // Add services to the container.
-      //Configure IOptions
-      builder.Services.Configure<ConnectionModel>(builder.Configuration.GetSection("ConnectionString"));
-      
+      // Add services to the container.       
       builder.Services.AddControllers();
-      //Configure database context
-      builder.Services.AddDbContext<StudentDbContext>(options =>
-          options.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionString"))
-         );
+    
+      // Bind ConnectionStrings section to the ConnectionStrings class       
+      builder.Services.Configure<ConnectionStrings>(builder.Configuration.GetSection("ConnectionStrings"));
+      // Configure DbContext to use the connection string from IOptions
+      builder.Services.AddDbContext<StudentDbContext>((serviceProvider, options) =>
+      {
+          var connectionStrings = serviceProvider.GetRequiredService<IOptions<ConnectionStrings>>().Value;
+          options.UseSqlServer(connectionStrings.SqlServerConnectionLocaldb);
+      });
       builder.Services.AddScoped<IStudentRepository,StudentRepository>();
       
       builder.Services.AddEndpointsApiExplorer();
