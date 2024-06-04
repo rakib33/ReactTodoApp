@@ -3,6 +3,7 @@ using DotNet_8_ToDoApp.Interfaces;
 using DotNet_8_ToDoApp.Models;
 using DotNet_8_ToDoApp.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,14 +19,22 @@ builder.Services.AddCors(options =>
     });
 });
 // Add services to the container.
-//Configure IOptions
-builder.Services.Configure<ConnectionModel>(builder.Configuration.GetSection("ConnectionString"));
 
 builder.Services.AddControllers();
 //Configure database context
-builder.Services.AddDbContext<StudentDbContext>(options =>
-    options.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=StudentDB;Integrated Security=True")
-   );
+//builder.Services.AddDbContext<StudentDbContext>(options =>
+//    options.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=StudentDB;Integrated Security=True")
+//   );
+
+// Bind ConnectionStrings section to the ConnectionStrings class
+builder.Services.Configure<ConnectionStrings>(builder.Configuration.GetSection("ConnectionStrings"));
+// Configure DbContext to use the connection string from IOptions
+builder.Services.AddDbContext<StudentDbContext>((serviceProvider, options) =>
+{
+    var connectionStrings = serviceProvider.GetRequiredService<IOptions<ConnectionStrings>>().Value;
+    options.UseSqlServer(connectionStrings.SqlServerConnectionLocaldb);
+});
+
 builder.Services.AddScoped<IStudentRepository,StudentRepository>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
