@@ -222,7 +222,9 @@ This is basic react js todo app for beginner.
      - **Microsoft.EntityFrameworkCore**
      - **Microsoft.EntityFrameworkCore.SqlServer**
      - **Microsoft.EntityFrameworkCore.Tools**
-     
+     - **Microsoft.AspNet.WebApi.Client**
+     - **Newtonsoft.Json**
+       
      ![image](https://github.com/rakib33/ReactTodoApp/assets/10026710/035f524e-a33c-4859-9e17-c3e01f7fa939)
    
    - Create a local database connection string in appsettings.json file
@@ -698,3 +700,4 @@ This is basic react js todo app for beginner.
    ## References
    - https://www.c-sharpcorner.com/article/reactjs-crud-using-net-core-web-api/
    - https://medium.com/@jaydeepvpatil225/product-management-application-using-net-core-6-and-react-js-with-crud-operation-1f8bb9f709ba
+   - https://learn.microsoft.com/en-us/aspnet/web-api/overview/advanced/calling-a-web-api-from-a-net-client
